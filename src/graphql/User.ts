@@ -1,6 +1,7 @@
 import { users, profiles } from '../db/dummy_data';
 import { User } from '../types';
 import { generateNextIdFromArray } from './util';
+import { GraphQLError } from 'graphql';
 
 export const userTypeDefs = /* GraphQL */ `
 	type User {
@@ -35,6 +36,21 @@ export const userResolvers = {
 	},
 	Mutation: {
 		createUser(_: any, args: User) {
+			const { email } = args;
+
+			const userAlredyExist = users.some((user) => user.email === email);
+
+			if (userAlredyExist) {
+				throw new GraphQLError(
+					`User '${args.name}' alredy exist on data base`,
+					{
+						extensions: {
+							code: 'USER_ALREDY_EXIST',
+						},
+					}
+				);
+			}
+
 			const newUser = {
 				...args,
 				id: generateNextIdFromArray(users),
