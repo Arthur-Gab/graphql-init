@@ -1,52 +1,70 @@
 import { createSchema, createYoga } from 'graphql-yoga';
-import { products, users } from './dummy_data';
+// import { products, users } from './dummy_data';
+interface User {
+	ID: Number;
+	profile_ID: Number;
+	name: String;
+	email: String;
+	phone_number: String;
+}
 
-const port = process.env.API_PORT || 4000;
+interface Profiles {
+	ID: Number;
+	isAdmin: Boolean;
+}
 
-/*
- * Int
- * Float
- * String
- * Boolean
- * ID
- */
+const { users, profiles } = {
+	users: [
+		{
+			ID: 0,
+			profile_ID: 0,
+			name: 'Arthur Gabriel',
+			email: 'someemail@gmail.com',
+			phone_number: '0000-0000',
+		},
+		{
+			ID: 1,
+			profile_ID: 1,
+			name: 'Rafaela Fernandes',
+			email: 'anotheremail@gmail.com',
+			phone_number: '1111-1111',
+		},
+	],
+	profiles: [
+		{ ID: 0, isAdmin: true },
+		{ ID: 1, isAdmin: false },
+	],
+};
 
 const typeDefs = /* GraphQL */ `
-	type Product {
-		id: ID!
-		name: String!
-		price: Float!
+	type User {
+		ID: Int
+		name: String
+		email: String
+		phone_number: String
+		profile: Profile
 	}
 
-	type User {
-		id: ID!
-		name: String!
-		age: Int!
-		salary: Float!
-		isActive: Boolean!
-		techs: [String!]!
+	type Profile {
+		ID: Int
+		isAdmin: Boolean
 	}
 
 	type Query {
-		getUserByIdOrName(id: Int, name: String): User!
-		getUsers: [User!]!
-		getProducts: [Product!]!
-		getProductByIdOrName(id: Int, name: String): Product
+		user(ID: Int): User!
+		profile(ID: Int): Profile!
 	}
 `;
 
 const resolvers = {
+	User: {
+		profile: (user: User) =>
+			profiles.find((profile) => profile.ID == user.profile_ID),
+	},
 	Query: {
-		getUserByIdOrName: (_: any, args: { id: Number; name: String }) =>
-			args.id !== undefined
-				? users.find((user) => user.id === args.id)
-				: users.find((user) => user.name === args.name),
-		getUsers: () => users,
-		getProducts: () => products,
-		getProductByIdOrName: (_: any, args: { id: Number; name: String }) =>
-			args.id !== undefined
-				? products.find((product) => product.id === args.id)
-				: products.find((product) => product.name === args.name),
+		user: (_: any, args: User) => users.find((user) => user.ID === args.ID),
+		profile: (_: any, args: Profiles) =>
+			profiles.find((profile) => profile.ID === args.ID),
 	},
 };
 
@@ -57,10 +75,13 @@ const yoga = createYoga({
 	}),
 });
 
+const port = process.env.API_PORT || 4000;
+
 const server = Bun.serve({
 	fetch: yoga,
 	port,
 });
+
 console.info(
 	`Server is running on ${new URL(
 		yoga.graphqlEndpoint,
