@@ -3,7 +3,7 @@ import { User } from '../types';
 
 export const userTypeDefs = /* GraphQL */ `
 	type User {
-		ID: Int
+		id: Int
 		name: String
 		email: String
 		phone_number: String
@@ -11,16 +11,21 @@ export const userTypeDefs = /* GraphQL */ `
 	}
 
 	type Query {
-		user(ID: Int): User!
+		user(id: Int, name: String): User
+		users: [User]!
 	}
 `;
 
 export const userResolvers = {
 	User: {
 		profile: (user: User) =>
-			profiles.find((profile) => profile.ID == user.profile_ID),
+			profiles.find((profile) => profile.id == user.profile_id),
 	},
 	Query: {
-		user: (_: any, args: User) => users.find((user) => user.ID === args.ID),
+		user: (_: any, { id, name }: User) =>
+			id !== undefined
+				? users.find((user) => user.id === id)
+				: users.find((user) => user.name === name),
+		users: () => users,
 	},
 };

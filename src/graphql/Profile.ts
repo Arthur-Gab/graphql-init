@@ -3,17 +3,17 @@ import { Profiles } from '../types';
 
 export const profileTypeDefs = /* GraphQL */ `
 	type Profile {
-		ID: Int
+		id: Int
 		isAdmin: Boolean
 	}
 	type Query {
-		profile(ID: Int): Profile!
+		profile(id: Int): Profile!
 	}
 `;
 
 export const profileResolvers = {
 	Query: {
 		profile: (_: any, args: Profiles) =>
-			profiles.find((profile) => profile.ID === args.ID),
+			profiles.find((profile) => profile.id === args.id),
 	},
 };
