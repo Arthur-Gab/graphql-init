@@ -17,8 +17,15 @@ export const userTypeDefs = /* GraphQL */ `
 		users: [User]!
 	}
 
+	input UserInput {
+		name: String!
+		email: String!
+		phone_number: String!
+	}
+
 	type Mutation {
-		createUser(name: String!, email: String!, phone_number: String!): User!
+		createUser(data: UserInput!): User!
+		updateUser(id: Int!, data: UserInput): User!
 	}
 `;
 
@@ -35,14 +42,14 @@ export const userResolvers = {
 		users: () => users,
 	},
 	Mutation: {
-		createUser(_: any, args: User) {
-			const { email } = args;
+		createUser(_: any, { data }: { data: User }) {
+			const { email } = data;
 
 			const userAlredyExist = users.some((user) => user.email === email);
 
 			if (userAlredyExist) {
 				throw new GraphQLError(
-					`User '${args.name}' alredy exist on data base`,
+					`User '${data.name}' alredy exist on data base`,
 					{
 						extensions: {
 							code: 'USER_ALREDY_EXIST',
@@ -52,7 +59,7 @@ export const userResolvers = {
 			}
 
 			const newUser = {
-				...args,
+				...data,
 				id: generateNextIdFromArray(users),
 				profile_id: generateNextIdFromArray(profiles),
 			};
@@ -60,6 +67,27 @@ export const userResolvers = {
 			users.push(newUser);
 
 			return newUser;
+		},
+		updateUser(_: any, { id, data }: { id: number; data: User }) {
+			const userIndex = users.findIndex((user) => user.id === id);
+
+			if (userIndex === -1) {
+				throw new GraphQLError(
+					`User '${data.name}' hasn't be created yet`,
+					{
+						extensions: {
+							code: 'USER_DONT_EXIST',
+						},
+					}
+				);
+			}
+
+			users[userIndex] = {
+				...users[userIndex],
+				...data,
+			};
+
+			return users[userIndex];
 		},
 	},
 };
