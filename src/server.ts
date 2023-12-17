@@ -1,4 +1,5 @@
 import { createSchema, createYoga } from 'graphql-yoga';
+import { products, users } from './dummy_data';
 
 const port = process.env.API_PORT || 4000;
 
@@ -27,43 +28,25 @@ const typeDefs = /* GraphQL */ `
 	}
 
 	type Query {
-		users: [User!]!
-		products: [Product!]!
+		getUserByIdOrName(id: Int, name: String): User!
+		getUsers: [User!]!
+		getProducts: [Product!]!
+		getProductByIdOrName(id: Int, name: String): Product
 	}
 `;
 
 const resolvers = {
 	Query: {
-		users: () => [
-			{
-				id: 0,
-				name: 'Arthur Gabriel',
-				age: 20,
-				salary: 1200.99,
-				isActive: true,
-				techs: ['TypeScript', 'NextJs', 'GraphQL', 'RESTfull API'],
-			},
-			{
-				id: 1,
-				name: 'Rafaela Clara',
-				age: 16,
-				salary: 700.0,
-				isActive: true,
-				techs: ['Proggraming Logic', 'Portugol'],
-			},
-		],
-		products: () => [
-			{
-				id: 0,
-				name: 'Logitech MX Mini',
-				price: 980.99,
-			},
-			{
-				id: 1,
-				name: 'Logitech LightSpeed G309',
-				price: 320.0,
-			},
-		],
+		getUserByIdOrName: (_: any, args: { id: Number; name: String }) =>
+			args.id !== undefined
+				? users.find((user) => user.id === args.id)
+				: users.find((user) => user.name === args.name),
+		getUsers: () => users,
+		getProducts: () => products,
+		getProductByIdOrName: (_: any, args: { id: Number; name: String }) =>
+			args.id !== undefined
+				? products.find((product) => product.id === args.id)
+				: products.find((product) => product.name === args.name),
 	},
 };
 

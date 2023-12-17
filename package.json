@@ -1,19 +1,19 @@
 {
-  "name": "graphql-initial",
-  "module": "server.ts",
-  "type": "module",
-  "scripts": {
-    "dev": "bun run src/server.ts",
-    "dev:watch": "bun --watch src/server.ts"
-  },
-  "devDependencies": {
-    "bun-types": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "graphql": "^16.8.1",
-    "graphql-yoga": "^5.0.2"
-  }
+	"name": "graphql-initial",
+	"module": "server.ts",
+	"type": "module",
+	"scripts": {
+		"dev": "bun run src/server.ts",
+		"dev:watch": "bun --watch src/server.ts"
+	},
+	"devDependencies": {
+		"bun-types": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5.0.0"
+	},
+	"dependencies": {
+		"graphql": "^16.8.1",
+		"graphql-yoga": "^5.0.2"
+	}
 }
