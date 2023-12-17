@@ -1,12 +1,12 @@
 export interface User {
-	id: Number;
-	profile_id: Number;
-	name: String;
-	email: String;
-	phone_number: String;
+	id: number;
+	profile_id: number;
+	name: string;
+	email: string;
+	phone_number: string;
 }
 
 export interface Profiles {
-	id: Number;
-	isAdmin: Boolean;
+	id: number;
+	isAdmin: boolean;
 }
