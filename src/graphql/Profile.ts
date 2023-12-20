@@ -1,5 +1,5 @@
 import { profiles } from '../db/dummy_data';
-import { Profiles } from '../types';
+import { Profiles } from './util/types';
 
 export const profileTypeDefs = /* GraphQL */ `
 	type Profile {

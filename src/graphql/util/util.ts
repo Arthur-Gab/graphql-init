@@ -1,4 +1,4 @@
-import { Profiles, User } from '../types';
+import { Profiles, User } from './types';
 
 export const generateNextIdFromArray = (
 	array: Array<User | Profiles>

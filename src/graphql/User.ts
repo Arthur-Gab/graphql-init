@@ -1,6 +1,6 @@
 import { users, profiles } from '../db/dummy_data';
-import { User } from '../types';
-import { generateNextIdFromArray } from './util';
+import { User } from './util/types';
+import { generateNextIdFromArray } from './util/util';
 import { GraphQLError } from 'graphql';
 
 export const userTypeDefs = /* GraphQL */ `
@@ -26,6 +26,7 @@ export const userTypeDefs = /* GraphQL */ `
 	type Mutation {
 		createUser(data: UserInput!): User!
 		updateUser(id: Int!, data: UserInput): User!
+		deleteUser(id: Int!): Boolean
 	}
 `;
 
@@ -42,7 +43,7 @@ export const userResolvers = {
 		users: () => users,
 	},
 	Mutation: {
-		createUser(_: any, { data }: { data: User }) {
+		createUser: (_: any, { data }: { data: User }) => {
 			const { email } = data;
 
 			const userAlredyExist = users.some((user) => user.email === email);
@@ -68,7 +69,7 @@ export const userResolvers = {
 
 			return newUser;
 		},
-		updateUser(_: any, { id, data }: { id: number; data: User }) {
+		updateUserById: (_: any, { id, data }: { id: number; data: User }) => {
 			const userIndex = users.findIndex((user) => user.id === id);
 
 			if (userIndex === -1) {
@@ -88,6 +89,12 @@ export const userResolvers = {
 			};
 
 			return users[userIndex];
+		},
+		deleteUserByID: (_: any, { id }: { id: number }) => {
+			const lengthBeforeDelete = users.length;
+			users.filter((user) => user.id !== id);
+
+			return lengthBeforeDelete > users.length ? true : false;
 		},
 	},
 };
